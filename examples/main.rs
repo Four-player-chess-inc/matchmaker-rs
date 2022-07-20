@@ -1,46 +1,42 @@
-use tokio::sync::mpsc::unbounded_channel;
-use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
-use yamm::{Matchmaker, Notify, Queuer};
+use futures::future::join_all;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use yamm::{Event, Matchmaker};
 
-struct Player {
-    mm_notify: (UnboundedSender<Notify<usize>>, UnboundedReceiver<Notify<usize>>),
-    uid: usize,
-}
-
-impl Player {
-    fn new(uid: usize) -> Player {
-        Player {
-            mm_notify: unbounded_channel(),
-            uid,
+async fn test(mm: Arc<Mutex<Matchmaker>>, uid: usize) {
+    let mut inqueue = mm.lock().await.join().await.unwrap();
+    //println!("locked");
+    while let Some(e) = inqueue.event().await {
+        match e {
+            Event::WaitForQuorum => println!("-> wait form quorum"),
+            Event::Kicked { reason } => println!("-> {:?}", reason),
+            Event::ConfirmRequired { timeout } => {
+                println!("-> {:?}", timeout);
+                if uid != 3 {
+                    inqueue.confirm();
+                }
+            }
+            Event::Ready => println!("ready!"),
         }
-    }
-    async fn wait_game(&mut self) {
-        self.mm_notify.1.recv().await;
-    }
-}
-
-impl Queuer for Player {
-    type Uid = usize;
-
-    fn get_sender(&self) -> UnboundedSender<Notify<Self::Uid>> {
-        self.mm_notify.0.clone()
-    }
-
-    fn get_unique_id(&self) -> Self::Uid {
-        self.uid
     }
 }
 
 #[tokio::main]
 async fn main() {
-    let mut p = Player::new(1);
+    {
+        let mm = Arc::new(Mutex::new(Matchmaker::new()));
 
-    let mut mm = Matchmaker2::new();
+        join_all(vec![
+            tokio::spawn(test(mm.clone(), 0)),
+            tokio::spawn(test(mm.clone(), 1)),
+            tokio::spawn(test(mm.clone(), 2)),
+            tokio::spawn(test(mm.clone(), 3)),
+        ])
+        .await;
+    }
 
-    let process = mm.join().await;
-    //process.leave();
-    /*match process.game().await {
-        Kick =>,
-        Ready =>
-    }*/
+    let mut line = String::new();
+    let _input = std::io::stdin()
+        .read_line(&mut line)
+        .expect("Failed to read line");
 }
