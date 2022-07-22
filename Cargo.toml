@@ -9,6 +9,7 @@ description = "Yet Another Matchaker"
 
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "sync"] }
+tokio-stream = "0.1.9"
 
 [dev-dependencies]
 futures = "0.3.21"
@@ -16,3 +17,4 @@ tokio-tungstenite = "0.17.2"
 env_logger = "0.8.4"
 log = "0.4.0"
 thiserror = "1.0.31"
+tokio-bidichannel = { git = "https://github.com/h04x/tokio-bidichannel", rev = "69aa612" }

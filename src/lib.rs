@@ -1,4 +1,4 @@
-mod inqueue;
+pub mod inqueue;
 mod state;
 
 use crate::inqueue::Inqueue;
@@ -69,6 +69,7 @@ impl Storage {
     }
 }
 
+#[derive(Debug)]
 pub enum Event {
     ConfirmRequired { timeout: Duration },
     Kicked { reason: KickedReason },
