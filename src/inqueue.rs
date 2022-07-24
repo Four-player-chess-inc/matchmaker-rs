@@ -54,7 +54,7 @@ impl Inqueue {
                 tx: self.tx,
                 uid: self.uid,
             },
-            UnboundedReceiverStream::new(self.rx)
+            UnboundedReceiverStream::new(self.rx),
         )
     }
 }

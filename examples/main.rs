@@ -9,9 +9,9 @@ async fn test(mm: Arc<Mutex<Matchmaker>>, uid: usize) {
     while let Some(e) = inqueue.event().await {
         match e {
             Event::WaitForQuorum => println!("-> wait form quorum"),
-            Event::Kicked { reason } => println!("-> {:?}", reason),
+            Event::Kicked { reason } => println!("-> kicked {:?}", reason),
             Event::ConfirmRequired { timeout } => {
-                println!("-> {:?}", timeout);
+                println!("-> comfirm requered {:?}", timeout);
                 if uid != 3 {
                     inqueue.confirm();
                 }
