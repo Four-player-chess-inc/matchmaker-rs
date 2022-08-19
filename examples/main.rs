@@ -1,12 +1,12 @@
 use futures::future::join_all;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use yamm::{Event, Matchmaker};
+use matchmaker::{Event, Matchmaker};
 
 async fn test(mm: Arc<Mutex<Matchmaker>>, uid: usize) {
     let mut inqueue = mm.lock().await.join().await.unwrap();
     //println!("locked");
-    while let Some(e) = inqueue.event().await {
+    while let Some(e) = inqueue.next_event().await {
         match e {
             Event::WaitForQuorum => println!("-> wait form quorum"),
             Event::Kicked { reason } => println!("-> kicked {:?}", reason),

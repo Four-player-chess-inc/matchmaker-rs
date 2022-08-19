@@ -1,5 +1,5 @@
 [package]
-name = "yamm"
+name = "matchmaker"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -17,4 +17,3 @@ tokio-tungstenite = "0.17.2"
 env_logger = "0.8.4"
 log = "0.4.0"
 thiserror = "1.0.31"
-tokio-bidichannel = { git = "https://github.com/h04x/tokio-bidichannel", rev = "69aa612" }

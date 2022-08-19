@@ -1,5 +1,5 @@
 use env_logger::Builder;
-use futures::stream::{select, select_all, SelectAll, SplitStream};
+use futures::stream::{BoxStream, select, select_all, SelectAll, SplitStream};
 use futures::{SinkExt, Stream, StreamExt};
 use log::{debug, error, info, LevelFilter};
 use std::pin::Pin;
@@ -10,8 +10,8 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tokio::sync::Mutex;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{tungstenite, WebSocketStream};
-use yamm::inqueue::{InqueueReceiver, InqueueSender};
-use yamm::{Event, Matchmaker};
+use matchmaker::inqueue::{InqueueReceiver, InqueueSender};
+use matchmaker::{Event, Matchmaker};
 
 #[derive(Error, Debug)]
 enum ConnectionHandlerError {
@@ -56,7 +56,8 @@ async fn top_lvl_handle(tcp_stream: TcpStream, mm: Arc<Mutex<Matchmaker>>) {
 
     let mut net_rx_map = net_rx.map(|i| NetMM::Net(i));
 
-    let mut select: SelectAll<Pin<Box<dyn Stream<Item = NetMM> + Send>>> = SelectAll::new();
+    //let mut select: SelectAll<Pin<Box<dyn Stream<Item = NetMM> + Send>>> = SelectAll::new();
+    let mut select: SelectAll<BoxStream<NetMM>> = SelectAll::new();
 
     select.push(Box::pin(net_rx_map));
 
