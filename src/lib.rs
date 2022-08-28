@@ -9,6 +9,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 use tokio::time::{self, Duration, Instant};
+use thiserror::Error;
 
 const SHEDULE_DELAY: Duration = Duration::from_millis(100);
 const QUORUM: usize = 4;
@@ -38,6 +39,7 @@ type Players = Arc<Mutex<HashMap<usize, Player>>>;
 
 #[derive(Error, Debug)]
 pub enum JoinErr {
+    #[error("duplicate unique id")]
     DuplicateUniqueId,
 }
 
