@@ -36,7 +36,7 @@ impl Player {
 
 type Players = Arc<Mutex<HashMap<usize, Player>>>;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum JoinErr {
     DuplicateUniqueId,
 }
