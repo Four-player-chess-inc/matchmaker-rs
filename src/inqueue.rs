@@ -25,11 +25,16 @@ pub struct InqueueSender {
 
 impl InqueueSender {
     pub fn leave(&self) {
-        // unwrap coz receiver alive while alive matchmaker
-        self.tx.send(FromPlayer::Leave(self.uid)).unwrap();
+        #[allow(unused_must_use)]
+        {
+            self.tx.send(FromPlayer::Leave(self.uid));
+        }
     }
     pub fn confirm(&self) {
-        self.tx.send(FromPlayer::Confirm(self.uid)).unwrap();
+        #[allow(unused_must_use)]
+        {
+            self.tx.send(FromPlayer::Confirm(self.uid));
+        }
     }
 }
 
